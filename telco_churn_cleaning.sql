@@ -1,34 +1,35 @@
 -- PROJECT: Telco Customer Churn Data Cleaning & Transformation
--- GOAL: Menyiapkan data mentah agar siap divisualisasikan di Tableau
+-- GOAL: Prepare raw data for visualization in Tableau
+-- SKILLS USED: Data Profiling, Data Cleaning, Data Transformation, Aggregate Functions, Converting Data Types, and Handling Missing Values.
 
-
--- 1. PILIH DATABASE
+-- Steps:
+-- 1. SELECT DATABASE
 USE telco_analysis; 
 
 
 -- 2. DATA PROFILING
--- Cek struktur tabel dan tipe data awal
+-- Check table structure and initial data types
 DESC telco_churn;
 
--- Cek jumlah total baris
+-- Check total row count
 SELECT COUNT(*) FROM telco_churn;
 
--- Cek apakah ada ID pelanggan yang duplikat
+-- Check for duplicate Customer IDs
 SELECT CustomerID, COUNT(*) 
 FROM telco_churn 
 GROUP BY CustomerID 
 HAVING COUNT(*) > 1;
 
 
--- 3. DATA CLEANING
-
--- Mengubah data kosong (spasi) pada Total Charges menjadi '0'
+-- 3. DATA CLEANING=
+-- Replace empty strings (spaces) in Total Charges with '0'
 UPDATE telco_churn 
 SET `Total Charges` = '0' 
 WHERE `Total Charges` = ' ';
 
--- 4. TRANSFORMASI TIPE DATA (DATA TRANSFORMATION)
--- Mengubah kolom teks menjadi Decimal untuk perhitungan matematis dan pemetaan
+
+-- 4. DATA TRANSFORMATION
+-- Convert text columns to Decimal for mathematical calculations and mapping
 ALTER TABLE telco_churn 
 MODIFY COLUMN `Total Charges` DECIMAL(15,2),
 MODIFY COLUMN `Monthly Charges` DECIMAL(10,2),
@@ -36,13 +37,14 @@ MODIFY COLUMN `Latitude` DECIMAL(10,6),
 MODIFY COLUMN `Longitude` DECIMAL(11,6);
 
 
--- 5. VERIFIKASI AKHIR
--- Memastikan tidak ada lagi nilai kosong pada range angka
+-- 5. FINAL VERIFICATION
+-- Ensure no missing values remain in the numeric ranges
 SELECT 
     MIN(`Total Charges`) AS min_total, 
     MAX(`Total Charges`) AS max_total,
     MIN(`Monthly Charges`) AS min_monthly
 FROM telco_churn;
 
--- Memastikan struktur tabel akhir sudah benar
+
+-- Confirm final table structure is correct
 DESC telco_churn;
